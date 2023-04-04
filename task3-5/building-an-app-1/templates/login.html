@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Log In</title>
+  </head>
+  <body>
+    <h1>Log In</h1>
+    {% if name %}
+      <h1>{{ name }}!</h1>
+    {% else %}
+      <h1>Please login if you DO have account!</h1>
+    {% endif %}
+
+    <form method="post" action="/check_login">
+      <label for="email">Email:</label>
+      <input type="text" id="email" name="email" required><br><br>
+      <!-- <label for="user_name">Username:</label>
+      <input type="user_name" id="user_name" name="user_name" required><br><br> -->
+      <label for="password">Password:</label>
+      <input type="text" id="password" name="password" required><br><br>
+      <input type="submit" value="Log In">
+      <a href="/">Sign Up</a>
+    </form>
+  </body>
+</html>

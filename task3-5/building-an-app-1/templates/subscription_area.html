@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Subscription Area</title>
+  </head>
+  <body>
+    <h1>Subscription Area</h1>
+    {% if email %}
+        <h1>{{ email }}!</h1>
+    {% endif %}
+
+    {% if msg %}
+        <h1>{{ msg }}!</h1>
+    {% else %}
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Year</th>
+                <th>Image</th>
+                <th>Action</th>
+            </tr>
+        {% for item in items %}
+            <tr>
+                <th>{{ item['title'] }}</th>
+                <th>{{ item['artist'] }}</th>
+                <th>{{ item['year'] }}</th>
+                <th><img src="{{ item['url'] }}" alt="{{ item['title'] }}"></th>
+                <th><i>Remove</i></th>
+            </tr>
+        {% endfor %}
+        </table>
+    {% endif %}
+  </body>
+</html>

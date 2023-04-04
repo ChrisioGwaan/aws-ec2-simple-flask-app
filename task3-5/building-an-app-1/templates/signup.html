@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Sign Up</title>
+  </head>
+  <body>
+    <h1>Sign Up</h1>
+    {% if name %}
+      <h1>{{ name }}!</h1>
+    {% else %}
+      <h1>Please sign up if you dont have account!</h1>
+    {% endif %}
+
+    <form method="post" action="/signup">
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required><br><br>
+        <label for="user_name">Username:</label>
+        <input type="text" id="user_name" name="user_name" required><br><br>
+        <label for="password">Password:</label>
+        <input type="text" id="password" name="password" required><br><br>
+        <input type="submit" value="Register">
+    </form>
+
+    <a href="{{ url_for('login') }}" action="/login">Log In</a>
+  </body>
+</html>

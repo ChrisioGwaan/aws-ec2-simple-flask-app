@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Main</title>
+  </head>
+  <body>
+    {% if name %}
+      <h1>Welcome to main page, {{ name }}!</h1>
+    {% endif %}
+    <form method="post" action="/logout">
+        <input type="submit" value="Log Out">
+    </form>
+
+    <!-- make two button, one to subscription_area, another to query_area -->
+    <a href="{{ url_for('subscription_area', email=email) }}">Go to Subscription Area</a>
+    <a href="{{ url_for('query_area', email=email) }}">Go to Query Area</a>
+  </body>
+</html>
