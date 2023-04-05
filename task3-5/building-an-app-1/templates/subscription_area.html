@@ -8,9 +8,8 @@
   </head>
   <body>
     <h1>Subscription Area</h1>
-    {% if email %}
-        <h1>{{ email }}!</h1>
-    {% endif %}
+
+    <a href="{{ url_for('main_page', email=email) }}">Go back</a>
 
     {% if msg %}
         <h1>{{ msg }}!</h1>
@@ -29,7 +28,15 @@
                 <th>{{ item['artist'] }}</th>
                 <th>{{ item['year'] }}</th>
                 <th><img src="{{ item['url'] }}" alt="{{ item['title'] }}"></th>
-                <th><i>Remove</i></th>
+                <th>
+                    <form method="post" action="/main_page/{{ email }}/subscription_area/remove">
+                        <input type="hidden" name="email" value="{{ email }}">
+                        <input type="hidden" name="title" value="{{ item['title'] }}">
+                        <input type="hidden" name="artist" value="{{ item['artist'] }}">
+                        <input type="hidden" name="year" value="{{ item['year'] }}">
+                        <input type="submit" value="Remove">
+                    </form>
+                </th>
             </tr>
         {% endfor %}
         </table>

@@ -24,6 +24,8 @@ import boto3
 
 from boto3.dynamodb.conditions import Key, Attr
 
+from botocore.exceptions import ClientError
+
 app = Flask(__name__)
 
 dynamodb = boto3.resource('dynamodb',
@@ -77,7 +79,7 @@ def signup():
 def login():    
     return render_template('login.html')
 
-@app.route('/check_login',methods = ['post'])
+@app.route('/check_login', methods = ['GET','POST'])
 def check_login():
     if request.method=='POST':
         
@@ -92,29 +94,30 @@ def check_login():
         # print(items[0]['password'])
 
         if password == items[0]['password']:
-            
-            return redirect(url_for('main_page', name=items[0]['user_name'], email = email))
+            return redirect(url_for('main_page', email=email))
         else:
             msg = "email or password is invalid"
             return render_template('login.html', name = msg)
     return render_template("login.html")
 
-@app.route('/logout', methods = ['post'])
+@app.route('/logout', methods = ['POST'])
 def logout():
     return render_template('login.html')
 
-@app.route('/main_page/<email>')
+@app.route('/main_page/<email>', methods = ['GET'])
 def main_page(email):
-    return render_template('main_page.html', email=email)
+    table = dynamodb.Table('login')
+    response = table.query(KeyConditionExpression=Key('email').eq(email))
+    items = response['Items']
+    user_name = items[0]['user_name']
+    return render_template('main_page.html', user_name=user_name, email=email)
 
-@app.route('/main_page/<email>/subscription_area')
+@app.route('/main_page/<email>/subscription_area', methods = ['GET'])
 def subscription_area(email):
     s3 = boto3.client('s3')
     table = dynamodb.Table('subscription')
 
-    response = table.query(
-            KeyConditionExpression=Key('email').eq(email)
-        )
+    response = table.scan(FilterExpression=Attr('email').eq(email))
 
     items = response['Items']
     
@@ -191,6 +194,91 @@ def query_area(email):
 
         return render_template('query_area.html', email=email, items=items)
     return render_template('query_area.html', email=email)
+
+@app.route('/main_page/<email>/query_area/subscribe', methods=['POST'])
+def subscribe(email):
+    email = request.form['email']
+    title = request.form['title']
+    artist = request.form['artist']
+    year = request.form['year']
+    
+    # Find the subscription in DynamoDB
+    table = dynamodb.Table('subscription')
+
+    response = table.scan(
+        FilterExpression=Attr('email').eq(email) & Attr('title').eq(title) & Attr('artist').eq(artist) & Attr('year').eq(year)
+        )
+    
+    items = response['Items']
+
+    # if items list is empty, return a message
+    if items:
+        msg = "You already subscribed to this stock!"
+        return render_template('query_area.html', email=email, msg=msg)
+    
+    response = table.scan()
+
+    items = response['Items']
+
+    id = 0 # default id
+
+    if not items:
+        table.put_item(
+            Item={
+                'id': id,
+                'email': email,
+                'title': title,
+                'artist': artist,
+                'year': year
+            }
+        )
+    else:
+        for item in items:
+            if item['id'] > id:
+                id = item['id']
+
+        id += 1
+        table.put_item(
+            Item={
+                'id': id,
+                'email': email,
+                'title': title,
+                'artist': artist,
+                'year': year
+            }
+        )
+
+    msg = f"You have subscribed song {title}!"
+    
+    return render_template('query_area.html', email=email, msg=msg)
+
+@app.route('/main_page/<email>/subscription_area/remove', methods=['POST'])
+def remove(email):
+    email = request.form['email']
+    title = request.form['title']
+    artist = request.form['artist']
+    year = request.form['year']
+    
+    # Find the subscription in DynamoDB
+    table = dynamodb.Table('subscription')
+
+    response = table.scan(
+        FilterExpression=Attr('email').eq(email) & Attr('title').eq(title) & Attr('artist').eq(artist) & Attr('year').eq(year)
+        )
+    
+    items = response['Items']
+    id = items[0]['id']
+
+    response = table.delete_item(
+        Key={
+            'id': id
+        }
+    )
+
+    msg = f"You have removed song {title}!"
+    
+    # Return a response to the user
+    return render_template('subscription_area.html', email=email, msg=msg)
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

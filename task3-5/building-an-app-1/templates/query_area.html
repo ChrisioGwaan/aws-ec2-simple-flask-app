@@ -8,9 +8,8 @@
   </head>
   <body>
     <h1>Query Area</h1>
-    {% if email %}
-        <h1>{{ email }}!</h1>
-    {% endif %}
+
+    <a href="{{ url_for('main_page', email=email) }}">Go back</a>
 
     <form method="post" action="/main_page/{{ email }}/query_area">
         <label for="title">Title:</label>
@@ -39,7 +38,15 @@
                 <th>{{ item['artist'] }}</th>
                 <th>{{ item['year'] }}</th>
                 <th><img src="{{ item['url'] }}" alt="{{ item['title'] }}"></th>
-                <th><i>Subscribe</i></th>
+                <th>
+                    <form method="post" action="/main_page/{{ email }}/query_area/subscribe">
+                        <input type="hidden" name="email" value="{{ email }}">
+                        <input type="hidden" name="title" value="{{ item['title'] }}">
+                        <input type="hidden" name="artist" value="{{ item['artist'] }}">
+                        <input type="hidden" name="year" value="{{ item['year'] }}">
+                        <input type="submit" value="Subscribe">
+                    </form>
+                </th>
             </tr>
         {% endfor %}
         </table>
