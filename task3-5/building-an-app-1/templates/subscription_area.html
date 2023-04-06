@@ -30,7 +30,6 @@
                 <th><img src="{{ item['url'] }}" alt="{{ item['title'] }}"></th>
                 <th>
                     <form method="post" action="/main_page/{{ email }}/subscription_area/remove">
-                        <input type="hidden" name="email" value="{{ email }}">
                         <input type="hidden" name="title" value="{{ item['title'] }}">
                         <input type="hidden" name="artist" value="{{ item['artist'] }}">
                         <input type="hidden" name="year" value="{{ item['year'] }}">
