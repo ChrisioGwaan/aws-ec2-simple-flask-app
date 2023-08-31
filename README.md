@@ -1,6 +1,8 @@
-# Cloud Computing Assignment 1
+# Cloud Computing Project
 
-* Student: Weixi Guan
-* ID: s3830776
-
-This project uses Flask framework with Python, AWS EC2 instance to host the website, DynamoDB to store the data and S3 Bucket to upload the images
+* Flask: 2.1.0
+* Python: 39
+* boto3: 1.26.107
+* pytest: 7.0.1
+* AWS EC2 instance
+* Storage: DynamoDB, S3 Bucket
